@@ -3,6 +3,7 @@ Database ini dirancang untuk memastikan proses reservasi berjalan aman, mencegah
 
 1. Tabel: users
 Menyimpan semua data pengguna aplikasi.
+
 | Field | Type | Keterangan |
 |-------|------|-----------|
 | id | BIGINT UNSIGNED | Primary Key |
@@ -20,6 +21,7 @@ Relasi:
 
 2. Tabel: rooms
 Menyimpan daftar ruang rapat yang tersedia.
+
 | Field | Type | Keterangan |
 |-------|------|-----------|
 | id | BIGINT UNSIGNED | Primary Key |
@@ -36,6 +38,7 @@ Relasi:
 
 3. Tabel: reservations
 Menyimpan semua data pemesanan ruang rapat.
+
 | Field | Type | Keterangan |
 |--------|------|-----------|
 | id | BIGINT UNSIGNED | Primary Key |
@@ -55,6 +58,7 @@ Relasi:
 
 4. Tabel: schedules
 Digunakan untuk menentukan hari kerja & jam kerja sistem.
+
 | Field | Type | Keterangan |
 |--------|------|-----------|
 | id | BIGINT UNSIGNED | Primary Key |
