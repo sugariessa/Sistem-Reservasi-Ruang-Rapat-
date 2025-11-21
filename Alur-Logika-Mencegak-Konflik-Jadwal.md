@@ -17,6 +17,7 @@ $request->validate([
     'end_time' => 'required|after:start_time',
     'keperluan' => 'required|string'
 ]);
+```php
 
 **Validasi Jam Reservasi untuk Hari Ini**
 
