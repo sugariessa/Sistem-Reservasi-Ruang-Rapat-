@@ -2,6 +2,7 @@ Aplikasi ini menerapkan beberapa lapisan validasi untuk memastikan tidak terjadi
 Berikut adalah alur logika lengkap yang digunakan dalam proses penyimpanan reservasi:
 
 **Validasi Input Dasar**
+
 Sebelum proses pengecekan jadwal, sistem memvalidasi:
 - ruang yang dipilih harus ada (room_id)
 - tanggal harus valid dan tidak boleh sebelum hari ini
@@ -17,6 +18,7 @@ _$request->validate([
 ]);_
 
 **Validasi Jam Reservasi untuk Hari Ini**
+
 Jika user melakukan reservasi di hari yang sama, sistem akan memastikan: jam mulai tidak boleh kurang dari atau sama dengan waktu sekarang
 
 _if ($request->date === date('Y-m-d')) {
@@ -27,6 +29,7 @@ _if ($request->date === date('Y-m-d')) {
 }_
 
 **Validasi Hari Kerja Sesuai Jadwal Sistem**
+
 Sistem memiliki tabel schedules untuk menentukan hari kerja.
 Jika user memilih tanggal di luar hari kerja, reservasi otomatis ditolak.
 
@@ -35,6 +38,7 @@ _if (!in_array($dayMapping[$dayName], $schedule->hari_kerja)) {
 }_
 
 **Validasi Jam Kerja Sesuai Konfigurasi**
+
 Sistem memastikan reservasi berada di dalam batas jam kerja:
 - Tidak boleh sebelum jam_mulai
 - Tidak boleh melewati jam_selesai
@@ -44,6 +48,7 @@ _if ($request->start_time < $schedule->jam_mulai || $request->end_time > $schedu
 }_
 
 **Validasi Bentrok (Overlap) dengan Reservasi Lain**
+
 Inilah inti logika anti konflik. Sistem melakukan pengecekan apakah ada reservasi lain di ruangan yang sama, tanggal yang sama, dan dengan jam yang saling bertumpukan.
 Reservasi dianggap bentrok jika:
 
@@ -71,6 +76,7 @@ Jika ditemukan konflik:
 _return back()->with('error', 'Jadwal bentrok. Silakan pilih waktu lain.');_
 
 **Reservasi Disimpan Jika Semua Valid**
+
 Jika semua pengecekan lolos, sistem menyimpan data dengan status awal reservasi adalah menunggu persetujuan admin.
 
 _Reservation::create([
