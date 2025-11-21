@@ -53,7 +53,7 @@ Sistem memastikan reservasi berada di dalam batas jam kerja:
 if ($request->start_time < $schedule->jam_mulai || $request->end_time > $schedule->jam_selesai) {
     return back()->with('error', 'Jam reservasi harus dalam rentang jam kerja.');
 }
-```php
+```
 
 **Validasi Bentrok (Overlap) dengan Reservasi Lain**
 
