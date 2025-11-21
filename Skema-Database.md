@@ -1,7 +1,8 @@
 Berikut adalah skema database yang digunakan pada aplikasi Reservasi Ruang Rapat.  
 Database ini dirancang untuk memastikan proses reservasi berjalan aman, mencegah bentrok jadwal, dan mendukung role Admin serta User.
 
-1. Tabel: users
+**Tabel: users**
+
 Menyimpan semua data pengguna aplikasi.
 
 | Field | Type | Keterangan |
@@ -19,7 +20,8 @@ Menyimpan semua data pengguna aplikasi.
 Relasi:  
 `users (1)` → `(N) reservations`
 
-2. Tabel: rooms
+**Tabel: rooms**
+
 Menyimpan daftar ruang rapat yang tersedia.
 
 | Field | Type | Keterangan |
@@ -36,7 +38,8 @@ Menyimpan daftar ruang rapat yang tersedia.
 Relasi:  
 `rooms (1)` → `(N) reservations`
 
-3. Tabel: reservations
+**Tabel: reservations**
+
 Menyimpan semua data pemesanan ruang rapat.
 
 | Field | Type | Keterangan |
@@ -56,7 +59,8 @@ Relasi:
 - `reservations.user_id` → `users.id`  
 - `reservations.room_id` → `rooms.id`
 
-4. Tabel: schedules
+**Tabel: schedules**
+
 Digunakan untuk menentukan hari kerja & jam kerja sistem.
 
 | Field | Type | Keterangan |
