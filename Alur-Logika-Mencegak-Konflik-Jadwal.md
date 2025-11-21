@@ -9,13 +9,14 @@ Sebelum proses pengecekan jadwal, sistem memvalidasi:
 - jam mulai dan jam selesai harus benar
 - keperluan harus diisi
   
-_$request->validate([
+```php
+$request->validate([
     'room_id' => 'required|exists:rooms,id',
     'date' => 'required|date|after_or_equal:today',
     'start_time' => 'required',
     'end_time' => 'required|after:start_time',
     'keperluan' => 'required|string'
-]);_
+]);
 
 **Validasi Jam Reservasi untuk Hari Ini**
 
