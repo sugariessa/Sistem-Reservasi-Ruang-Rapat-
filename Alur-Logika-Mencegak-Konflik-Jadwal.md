@@ -7,6 +7,7 @@ Sebelum proses pengecekan jadwal, sistem memvalidasi:
 - tanggal harus valid dan tidak boleh sebelum hari ini
 - jam mulai dan jam selesai harus benar
 - keperluan harus diisi
+  
 $request->validate([
     'room_id' => 'required|exists:rooms,id',
     'date' => 'required|date|after_or_equal:today',
@@ -17,6 +18,7 @@ $request->validate([
 
 **Validasi Jam Reservasi untuk Hari Ini**
 Jika user melakukan reservasi di hari yang sama, sistem akan memastikan: jam mulai tidak boleh kurang dari atau sama dengan waktu sekarang
+
 if ($request->date === date('Y-m-d')) {
     $currentTime = date('H:i');
     if ($request->start_time <= $currentTime) {
@@ -27,6 +29,7 @@ if ($request->date === date('Y-m-d')) {
 **Validasi Hari Kerja Sesuai Jadwal Sistem**
 Sistem memiliki tabel schedules untuk menentukan hari kerja.
 Jika user memilih tanggal di luar hari kerja, reservasi otomatis ditolak.
+
 if (!in_array($dayMapping[$dayName], $schedule->hari_kerja)) {
     return back()->with('error', 'Reservasi tidak dapat dilakukan pada hari ' . $dayName);
 }
@@ -35,6 +38,7 @@ if (!in_array($dayMapping[$dayName], $schedule->hari_kerja)) {
 Sistem memastikan reservasi berada di dalam batas jam kerja:
 - Tidak boleh sebelum jam_mulai
 - Tidak boleh melewati jam_selesai
+  
 if ($request->start_time < $schedule->jam_mulai || $request->end_time > $schedule->jam_selesai) {
     return back()->with('error', 'Jam reservasi harus dalam rentang jam kerja.');
 }
@@ -52,6 +56,7 @@ Dengan status yang masih aktif:
 - diterima
 
 Kode pengecekannya:
+
 $conflict = Reservation::where('room_id', $request->room_id)
     ->where('date', $request->date)
     ->whereIn('status', ['menunggu', 'diterima'])
@@ -62,10 +67,12 @@ $conflict = Reservation::where('room_id', $request->room_id)
     ->exists();
 
 Jika ditemukan konflik:
+
 return back()->with('error', 'Jadwal bentrok. Silakan pilih waktu lain.');
 
 **Reservasi Disimpan Jika Semua Valid**
 Jika semua pengecekan lolos, sistem menyimpan data dengan status awal reservasi adalah menunggu persetujuan admin.
+
 Reservation::create([
     'user_id' => auth()->id(),
     'room_id' => $request->room_id,
