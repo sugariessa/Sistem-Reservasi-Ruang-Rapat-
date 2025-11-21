@@ -23,21 +23,25 @@ $request->validate([
 
 Jika user melakukan reservasi di hari yang sama, sistem akan memastikan: jam mulai tidak boleh kurang dari atau sama dengan waktu sekarang
 
-_if ($request->date === date('Y-m-d')) {
+```php
+if ($request->date === date('Y-m-d')) {
     $currentTime = date('H:i');
     if ($request->start_time <= $currentTime) {
         return back()->with('error', 'Tidak dapat membuat reservasi untuk jam yang sudah terlewat.');
     }
-}_
+}
+```
 
 **Validasi Hari Kerja Sesuai Jadwal Sistem**
 
 Sistem memiliki tabel schedules untuk menentukan hari kerja.
 Jika user memilih tanggal di luar hari kerja, reservasi otomatis ditolak.
 
-_if (!in_array($dayMapping[$dayName], $schedule->hari_kerja)) {
+```php
+if (!in_array($dayMapping[$dayName], $schedule->hari_kerja)) {
     return back()->with('error', 'Reservasi tidak dapat dilakukan pada hari ' . $dayName);
-}_
+}
+```
 
 **Validasi Jam Kerja Sesuai Konfigurasi**
 
@@ -45,18 +49,22 @@ Sistem memastikan reservasi berada di dalam batas jam kerja:
 - Tidak boleh sebelum jam_mulai
 - Tidak boleh melewati jam_selesai
   
-_if ($request->start_time < $schedule->jam_mulai || $request->end_time > $schedule->jam_selesai) {
+```php
+if ($request->start_time < $schedule->jam_mulai || $request->end_time > $schedule->jam_selesai) {
     return back()->with('error', 'Jam reservasi harus dalam rentang jam kerja.');
-}_
+}
+```php
 
 **Validasi Bentrok (Overlap) dengan Reservasi Lain**
 
 Inilah inti logika anti konflik. Sistem melakukan pengecekan apakah ada reservasi lain di ruangan yang sama, tanggal yang sama, dan dengan jam yang saling bertumpukan.
 Reservasi dianggap bentrok jika:
 
-  _start_time < reservasi_lain.end_time
+```php
+  start_time < reservasi_lain.end_time
   AND
-  end_time > reservasi_lain.start_time_
+  end_time > reservasi_lain.start_time
+```
   
 Dengan status yang masih aktif:
 - menunggu
@@ -64,24 +72,29 @@ Dengan status yang masih aktif:
 
 Kode pengecekannya:
 
-_$conflict = Reservation::where('room_id', $request->room_id)
+```php
+$conflict = Reservation::where('room_id', $request->room_id)
     ->where('date', $request->date)
     ->whereIn('status', ['menunggu', 'diterima'])
     ->where(function ($query) use ($request) {
         $query->where('start_time', '<', $request->end_time)
               ->where('end_time', '>', $request->start_time);
     })
-    ->exists();_
+    ->exists();
+```
 
 Jika ditemukan konflik:
 
-_return back()->with('error', 'Jadwal bentrok. Silakan pilih waktu lain.');_
+```php
+return back()->with('error', 'Jadwal bentrok. Silakan pilih waktu lain.');
+```
 
 **Reservasi Disimpan Jika Semua Valid**
 
 Jika semua pengecekan lolos, sistem menyimpan data dengan status awal reservasi adalah menunggu persetujuan admin.
 
-_Reservation::create([
+```php
+Reservation::create([
     'user_id' => auth()->id(),
     'room_id' => $request->room_id,
     'keperluan' => $request->keperluan,
@@ -89,6 +102,7 @@ _Reservation::create([
     'start_time' => $request->start_time,
     'end_time' => $request->end_time,
     'status' => 'menunggu'
-]);_
+]);
+```
 
 Dengan alur ini, sistem memastikan tidak ada reservasi yang beririsan, sehingga semua pengguna mendapatkan jadwal ruang rapat yang aman dan teratur.
